@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX — F1 Card & Quiz Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E8002D;
+  --red-dark: #a8001f;
+  --gold: #FFD700;
+  --gold-dim: #c9a800;
+  --carbon: #0a0a0a;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --surface3: #222222;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --text-dim: #888;
+  --green: #00c853;
+  --blue: #2979ff;
+  --purple: #aa00ff;
+  --teal: #00bcd4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--carbon);color:var(--text);font-family:'Barlow',sans-serif;overflow-x:hidden}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--carbon)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:56px;gap:8px}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.6rem;color:var(--red);letter-spacing:2px;margin-right:16px;cursor:pointer}
+.nav-logo span{color:var(--text)}
+.nav-btn{background:none;border:none;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:1rem;letter-spacing:1px;padding:8px 14px;cursor:pointer;border-radius:4px;transition:all .2s;text-transform:uppercase}
+.nav-btn:hover,.nav-btn.active{color:var(--text);background:var(--surface2)}
+.nav-btn.active{color:var(--red);border-bottom:2px solid var(--red)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:16px}
+.coins-display{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--gold-dim);border-radius:20px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;color:var(--gold)}
+.coins-display .coin-icon{font-size:1rem}
+
+/* PAGES */
+.page{display:none;padding:72px 0 40px}
+.page.active{display:block}
+
+/* HOME */
+.hero{position:relative;min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center top, rgba(232,0,45,0.15) 0%, transparent 60%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:40px 40px}
+.hero-title{position:relative;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(4rem,12vw,9rem);line-height:0.9;text-transform:uppercase;letter-spacing:-2px}
+.hero-title .line1{color:var(--text);display:block}
+.hero-title .line2{color:var(--red);display:block;font-size:clamp(5rem,14vw,11rem)}
+.hero-sub{position:relative;font-size:1.1rem;color:var(--text-dim);margin:24px 0 40px;max-width:500px;line-height:1.6}
+.hero-btns{position:relative;display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#ff1a45;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--red);color:var(--red)}
+.btn-gold{background:var(--gold);color:#000}
+.btn-gold:hover{background:#ffe033}
+.btn-green{background:var(--green);color:#000}
+.btn-green:hover{background:#00e664}
+.btn-sm{padding:8px 16px;font-size:.9rem}
+
+.feature-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:40px}
+.feature-item{background:var(--carbon);padding:32px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;cursor:pointer;transition:background .2s}
+.feature-item:hover{background:var(--surface)}
+.feature-icon{font-size:2.2rem}
+.feature-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:1px;text-transform:uppercase}
+.feature-desc{font-size:.85rem;color:var(--text-dim);line-height:1.5}
+
+/* SECTION HEADERS */
+.section{max-width:1100px;margin:0 auto;padding:40px 24px}
+.section-header{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.2rem;text-transform:uppercase;letter-spacing:1px}
+.section-subtitle{font-size:.9rem;color:var(--text-dim)}
+
+/* QUIZ PAGE */
+.quiz-categories{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:40px}
+.quiz-cat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.quiz-cat:hover{border-color:var(--red);transform:translateY(-2px)}
+.quiz-cat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cat-color,var(--red))}
+.quiz-cat-icon{font-size:2rem;margin-bottom:12px;display:block}
+.quiz-cat-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.3rem;text-transform:uppercase;margin-bottom:4px}
+.quiz-cat-desc{font-size:.83rem;color:var(--text-dim)}
+.quiz-cat-reward{margin-top:12px;font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--gold)}
+
+/* QUIZ ACTIVE */
+.quiz-container{max-width:700px;margin:0 auto}
+.quiz-progress{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.quiz-progress-bar{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.quiz-progress-fill{height:100%;background:var(--red);transition:width .4s}
+.quiz-q-num{font-family:'Share Tech Mono',monospace;font-size:.85rem;color:var(--text-dim)}
+.quiz-timer{font-family:'Share Tech Mono',monospace;font-size:.85rem;color:var(--gold);margin-left:auto}
+.quiz-question{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:32px;margin-bottom:20px}
+.quiz-q-text{font-size:1.2rem;line-height:1.5;font-weight:500}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-option{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;cursor:pointer;font-size:1rem;text-align:left;color:var(--text);transition:all .2s;display:flex;align-items:center;gap:12px}
+.quiz-option:hover:not(.locked){border-color:var(--red);background:var(--surface3)}
+.quiz-option.correct{background:rgba(0,200,83,0.15);border-color:var(--green);color:var(--green)}
+.quiz-option.wrong{background:rgba(232,0,45,0.1);border-color:var(--red);color:var(--red-dark)}
+.quiz-option.locked{cursor:default}
+.quiz-option-key{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--text-dim);width:20px}
+.quiz-result{text-align:center;padding:40px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.quiz-result-score{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:4rem;color:var(--gold)}
+.quiz-result-earned{font-size:1.2rem;margin:8px 0 24px;color:var(--text-dim)}
+
+/* CARDS PAGE */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-bottom:40px}
+.pack-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.pack-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.pack-banner{height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+.pack-info{padding:20px}
+.pack-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.3rem;text-transform:uppercase;letter-spacing:1px}
+.pack-desc{font-size:.83rem;color:var(--text-dim);margin:4px 0 12px}
+.pack-price{display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;color:var(--gold)}
+.pack-odds{font-size:.75rem;color:var(--text-dim);font-family:'Share Tech Mono',monospace;margin-top:8px}
+
+/* DRIVER CARDS */
+.card{border-radius:12px;overflow:hidden;position:relative;cursor:pointer;transition:transform .2s}
+.card:hover{transform:scale(1.03)}
+.card-inner{padding:20px;position:relative;z-index:1}
+.card-team-stripe{height:6px;width:100%;position:absolute;top:0;left:0}
+.card-rarity-badge{position:absolute;top:12px;right:12px;font-family:'Share Tech Mono',monospace;font-size:.7rem;padding:3px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:1px}
+.rarity-common{background:var(--surface3);color:var(--text-dim)}
+.rarity-rare{background:rgba(41,121,255,0.2);color:var(--blue);border:1px solid var(--blue)}
+.rarity-epic{background:rgba(170,0,255,0.2);color:var(--purple);border:1px solid var(--purple)}
+.rarity-legendary{background:rgba(255,215,0,0.2);color:var(--gold);border:1px solid var(--gold)}
+.card-number{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:rgba(255,255,255,0.2);margin-top:24px}
+.card-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.6rem;text-transform:uppercase;letter-spacing:1px;line-height:1}
+.card-nation{font-size:.8rem;color:var(--text-dim);margin:2px 0 12px}
+.card-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.card-stat{background:rgba(0,0,0,0.3);border-radius:4px;padding:6px 10px;font-family:'Share Tech Mono',monospace}
+.card-stat-label{font-size:.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px}
+.card-stat-val{font-size:1rem;font-weight:700;color:var(--text)}
+.card-overall{position:absolute;bottom:16px;right:16px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.4rem;line-height:1}
+
+/* COLLECTION */
+.collection-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.collection-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.collection-card:hover{transform:translateY(-3px)}
+.collection-card .card-inner{padding:16px}
+.collection-card .card-name{font-size:1.2rem}
+.empty-collection{text-align:center;padding:60px 20px;color:var(--text-dim)}
+.empty-collection .icon{font-size:3rem;margin-bottom:16px}
+
+/* PACK OPENING ANIMATION */
+.pack-opening-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:2000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;display:none}
+.pack-opening-overlay.open{display:flex}
+.pack-animation{font-size:6rem;animation:packSpin 0.6s ease-out forwards}
+@keyframes packSpin{0%{transform:scale(0) rotate(-180deg);opacity:0}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.reveal-cards{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:900px}
+.reveal-card{animation:cardReveal .4s ease-out backwards;border-radius:12px;overflow:hidden;width:160px}
+@keyframes cardReveal{0%{transform:translateY(40px) rotateY(90deg);opacity:0}100%{transform:translateY(0) rotateY(0);opacity:1}}
+
+/* BETTING PAGE */
+.betting-section{margin-bottom:40px}
+.race-bet-grid{display:grid;gap:16px}
+.race-bet-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.race-bet-header{display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.race-flag{font-size:1.6rem}
+.race-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.2rem;text-transform:uppercase}
+.race-date{font-size:.8rem;color:var(--text-dim);font-family:'Share Tech Mono',monospace}
+.race-status{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:.75rem;padding:4px 10px;border-radius:3px}
+.status-open{background:rgba(0,200,83,0.15);color:var(--green)}
+.status-closed{background:var(--surface3);color:var(--text-dim)}
+.status-settled{background:rgba(255,215,0,0.1);color:var(--gold)}
+.bet-odds-row{display:flex;gap:8px;padding:12px 20px;flex-wrap:wrap;overflow-x:auto}
+.bet-option{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;cursor:pointer;transition:all .2s;min-width:120px;text-align:center}
+.bet-option:hover{border-color:var(--gold)}
+.bet-option.selected{border-color:var(--gold);background:rgba(255,215,0,0.08)}
+.bet-driver-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.95rem;text-transform:uppercase}
+.bet-odds{font-family:'Share Tech Mono',monospace;font-size:.85rem;color:var(--gold)}
+.bet-controls{padding:12px 20px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border)}
+.bet-amount-input{background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:8px 12px;color:var(--text);font-family:'Share Tech Mono',monospace;width:120px}
+.my-bets-list{display:grid;gap:10px}
+.my-bet{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;display:flex;align-items:center;gap:16px}
+.my-bet-info{flex:1}
+.my-bet-race{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem}
+.my-bet-detail{font-size:.83rem;color:var(--text-dim)}
+.my-bet-amount{font-family:'Share Tech Mono',monospace;color:var(--gold);font-weight:700}
+
+/* SIMULATION PAGE */
+.sim-setup{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px}
+.sim-team-builder{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+.sim-slot{background:var(--surface2);border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:border-color .2s}
+.sim-slot:hover{border-color:var(--red)}
+.sim-slot.filled{border-style:solid;border-color:var(--border)}
+.sim-slot-label{font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;font-weight:600}
+.sim-slot-driver{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.1rem;text-transform:uppercase}
+.sim-slot-rating{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--gold)}
+.sim-results{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.sim-race-result{padding:0;border-bottom:1px solid var(--border)}
+.sim-race-header{padding:12px 20px;background:var(--surface2);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.95rem;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.sim-podium-row{display:flex;align-items:center;gap:12px;padding:10px 20px;font-size:.9rem}
+.sim-pos{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--text-dim);width:24px}
+.sim-pos.p1{color:var(--gold)}
+.sim-pos.p2{color:#c0c0c0}
+.sim-pos.p3{color:#cd7f32}
+.standings-table{width:100%;border-collapse:collapse}
+.standings-table th{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+.standings-table td{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:.9rem}
+.standings-table tr:hover td{background:var(--surface2)}
+.pts-badge{background:var(--red);color:#fff;font-family:'Share Tech Mono',monospace;font-size:.8rem;padding:2px 8px;border-radius:3px}
+
+/* SEARCH PAGE */
+.search-bar-container{position:relative;margin-bottom:32px}
+.search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px 16px 48px;font-size:1.1rem;color:var(--text);font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--red)}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1.2rem;color:var(--text-dim)}
+.search-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.driver-profile{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.driver-profile:hover{border-color:var(--red);transform:translateY(-2px)}
+.driver-profile-header{height:80px;display:flex;align-items:flex-end;padding:16px;position:relative}
+.driver-profile-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3.5rem;position:absolute;right:16px;top:0;line-height:1;opacity:0.15}
+.driver-profile-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.4rem;text-transform:uppercase;line-height:1}
+.driver-profile-body{padding:16px}
+.driver-profile-team{font-size:.83rem;color:var(--text-dim);margin-bottom:12px}
+.driver-profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dp-stat{text-align:center;background:var(--surface2);border-radius:4px;padding:8px 4px}
+.dp-stat-v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.2rem}
+.dp-stat-l{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;gap:12px;padding:20px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.3rem;text-transform:uppercase;flex:1}
+.modal-close{background:none;border:none;color:var(--text-dim);font-size:1.4rem;cursor:pointer;padding:4px}
+.modal-body{padding:20px}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 18px;font-size:.9rem;display:flex;align-items:center;gap:10px;animation:toastIn .3s ease-out;min-width:220px}
+.toast.gold{border-color:var(--gold-dim)}
+.toast.green{border-color:var(--green)}
+.toast.red{border-color:var(--red)}
+@keyframes toastIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* CARD SELECT MODAL */
+.card-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;max-height:400px;overflow-y:auto}
+.card-select-item{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.card-select-item:hover,.card-select-item.selected{border-color:var(--red)}
+.card-select-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.95rem;text-transform:uppercase}
+.card-select-rat{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--gold)}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--surface);border-radius:6px;padding:4px;margin-bottom:24px;width:fit-content}
+.tab{padding:8px 20px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.95rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text-dim);transition:all .2s;border:none;background:none}
+.tab.active{background:var(--red);color:#fff}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.animate-pulse{animation:pulse 2s infinite}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-gold{background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.3)}
+.badge-red{background:rgba(232,0,45,0.15);color:var(--red);border:1px solid rgba(232,0,45,0.3)}
+
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* Striped bg for legendary */
+.card.legendary-bg{background:linear-gradient(135deg,#1a1100 0%,#2a1e00 50%,#1a1100 100%)}
+.card.epic-bg{background:linear-gradient(135deg,#0d0020 0%,#1a0035 50%,#0d0020 100%)}
+.card.rare-bg{background:linear-gradient(135deg,#001230 0%,#001a4a 50%,#001230 100%)}
+.card.common-bg{background:var(--surface)}
+
+/* Responsive */
+@media(max-width:600px){
+  .hero-title .line2{font-size:clamp(4rem,20vw,8rem)}
+  .sim-team-builder{grid-template-columns:1fr}
+  nav{padding:0 12px}
+  .nav-btn{padding:6px 8px;font-size:.85rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="navigate('home')">APEX<span>F1</span></div>
+  <button class="nav-btn active" id="nav-home" onclick="navigate('home')">Home</button>
+  <button class="nav-btn" id="nav-quiz" onclick="navigate('quiz')">Quiz</button>
+  <button class="nav-btn" id="nav-cards" onclick="navigate('cards')">Cards</button>
+  <button class="nav-btn" id="nav-bet" onclick="navigate('bet')">Betting</button>
+  <button class="nav-btn" id="nav-sim" onclick="navigate('sim')">Simulate</button>
+  <button class="nav-btn" id="nav-search" onclick="navigate('search')">Drivers</button>
+  <div class="nav-right">
+    <div class="coins-display"><span class="coin-icon">🪙</span><span id="coins-display">0</span></div>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-title">
+      <span class="line1">Welcome to</span>
+      <span class="line2">APEXF1</span>
+    </div>
+    <p class="hero-sub">The ultimate Formula 1 card collecting & gaming platform. Quiz your way to coins, build your deck, and simulate glory.</p>
+    <div class="hero-btns">
+      <button class="btn btn-red" onclick="navigate('quiz')">🏎 Start Quiz</button>
+      <button class="btn btn-outline" onclick="navigate('cards')">🃏 Card Shop</button>
+      <button class="btn btn-gold" onclick="navigate('bet')">💰 Place Bets</button>
+    </div>
+  </div>
+  <div class="feature-strip">
+    <div class="feature-item" onclick="navigate('quiz')">
+      <span class="feature-icon">🧠</span>
+      <div class="feature-label">F1 Quizzes</div>
+      <div class="feature-desc">Test your knowledge across history, stats, circuits, and more. Earn coins for every correct answer.</div>
+    </div>
+    <div class="feature-item" onclick="navigate('cards')">
+      <span class="feature-icon">🃏</span>
+      <div class="feature-label">Card Packs</div>
+      <div class="feature-desc">Spend coins on packs containing driver and car cards from all eras of Formula 1.</div>
+    </div>
+    <div class="feature-item" onclick="navigate('bet')">
+      <span class="feature-icon">💰</span>
+      <div class="feature-label">Season Betting</div>
+      <div class="feature-desc">Wager coins on the 2026 F1 season races and championship outcomes.</div>
+    </div>
+    <div class="feature-item" onclick="navigate('sim')">
+      <span class="feature-icon">🏆</span>
+      <div class="feature-label">Season Sim</div>
+      <div class="feature-desc">Build a team with your cards and simulate a full F1 season to see who wins.</div>
+    </div>
+    <div class="feature-item" onclick="navigate('search')">
+      <span class="feature-icon">🔍</span>
+      <div class="feature-label">Driver Search</div>
+      <div class="feature-desc">Look up every F1 driver — career stats, team history, and card details.</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ PAGE -->
+<div class="page" id="page-quiz">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">F1 Quizzes</div>
+      <div class="section-subtitle">Earn coins for correct answers</div>
+    </div>
+    <div id="quiz-category-view">
+      <div class="quiz-categories" id="quiz-cats"></div>
+    </div>
+    <div id="quiz-active-view" style="display:none">
+      <div class="quiz-container">
+        <div class="quiz-progress">
+          <div class="quiz-q-num" id="qnum">Q1 / 10</div>
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="qprogress" style="width:10%"></div></div>
+          <div class="quiz-timer" id="qtimer">⏱ 15s</div>
+        </div>
+        <div class="quiz-question" id="quiz-question-box">
+          <div class="quiz-q-text" id="quiz-q-text"></div>
+        </div>
+        <div class="quiz-options" id="quiz-options"></div>
+      </div>
+    </div>
+    <div id="quiz-result-view" style="display:none">
+      <div class="quiz-container">
+        <div class="quiz-result">
+          <div style="font-size:2rem;margin-bottom:8px" id="result-emoji">🏆</div>
+          <div class="quiz-result-score" id="result-score"></div>
+          <div class="quiz-result-earned" id="result-earned"></div>
+          <button class="btn btn-red" onclick="showQuizCategories()" style="margin:0 8px 0 0">Play Again</button>
+          <button class="btn btn-outline" onclick="navigate('cards')">Open Pack Shop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CARDS PAGE -->
+<div class="page" id="page-cards">
+  <div class="section">
+    <div class="tabs">
+      <button class="tab active" onclick="switchCardTab('shop',this)">Pack Shop</button>
+      <button class="tab" onclick="switchCardTab('collection',this)">My Collection</button>
+    </div>
+    <!-- SHOP -->
+    <div id="card-tab-shop">
+      <div class="section-header">
+        <div class="section-title">Pack Shop</div>
+        <div class="section-subtitle">Spend coins to open card packs</div>
+      </div>
+      <div class="shop-grid" id="shop-grid"></div>
+    </div>
+    <!-- COLLECTION -->
+    <div id="card-tab-collection" style="display:none">
+      <div class="section-header">
+        <div class="section-title">My Collection</div>
+        <div class="section-subtitle" id="collection-count">0 cards</div>
+      </div>
+      <div class="collection-grid" id="collection-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BETTING PAGE -->
+<div class="page" id="page-bet">
+  <div class="section">
+    <div class="tabs">
+      <button class="tab active" onclick="switchBetTab('markets',this)">Race Markets</button>
+      <button class="tab" onclick="switchBetTab('mybets',this)">My Bets</button>
+      <button class="tab" onclick="switchBetTab('champion',this)">Championship</button>
+    </div>
+    <div id="bet-tab-markets">
+      <div class="section-header">
+        <div class="section-title">2026 Season Betting</div>
+        <div class="section-subtitle">Pick winners, earn multiplied coins</div>
+      </div>
+      <div class="race-bet-grid" id="race-bet-grid"></div>
+    </div>
+    <div id="bet-tab-mybets" style="display:none">
+      <div class="section-header">
+        <div class="section-title">My Bets</div>
+        <div class="section-subtitle" id="bets-summary"></div>
+      </div>
+      <div class="my-bets-list" id="my-bets-list"></div>
+    </div>
+    <div id="bet-tab-champion" style="display:none">
+      <div class="section-header">
+        <div class="section-title">Championship Winner</div>
+        <div class="section-subtitle">Place one big bet on the 2026 WDC</div>
+      </div>
+      <div id="champion-bet-grid" class="bet-odds-row" style="flex-wrap:wrap;padding:0;gap:12px;margin-bottom:20px"></div>
+      <div id="champion-bet-controls" style="display:flex;align-items:center;gap:12px;margin-top:20px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase">Stake:</span>
+        <input type="number" class="bet-amount-input" id="champion-stake" placeholder="100" min="10">
+        <button class="btn btn-gold btn-sm" onclick="placeChampionBet()">Place Championship Bet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULATION PAGE -->
+<div class="page" id="page-sim">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Season Simulator</div>
+      <div class="section-subtitle">Build your team and run a full season</div>
+    </div>
+    <div id="sim-setup-view">
+      <div class="sim-setup">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;text-transform:uppercase;margin-bottom:8px">Select Your Drivers</div>
+        <div style="font-size:.85rem;color:var(--text-dim);margin-bottom:16px">Choose 2 driver cards from your collection to compete</div>
+        <div class="sim-team-builder">
+          <div class="sim-slot" id="sim-slot-1" onclick="openCardSelect(1)">
+            <span style="font-size:2rem">➕</span>
+            <div class="sim-slot-label">Driver 1</div>
+          </div>
+          <div class="sim-slot" id="sim-slot-2" onclick="openCardSelect(2)">
+            <span style="font-size:2rem">➕</span>
+            <div class="sim-slot-label">Driver 2</div>
+          </div>
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;text-transform:uppercase;margin-bottom:8px;margin-top:24px">Select Your Car</div>
+        <div style="font-size:.85rem;color:var(--text-dim);margin-bottom:16px">Choose a car card to boost your team's performance</div>
+        <div class="sim-team-builder" style="grid-template-columns:1fr">
+          <div class="sim-slot" id="sim-slot-car" onclick="openCardSelect('car')">
+            <span style="font-size:2rem">🏎</span>
+            <div class="sim-slot-label">Car Card (optional)</div>
+          </div>
+        </div>
+        <button class="btn btn-red" onclick="runSimulation()" style="margin-top:20px" id="sim-run-btn">🏁 Simulate Season</button>
+      </div>
+    </div>
+    <div id="sim-results-view" style="display:none;margin-top:24px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+        <div class="section-title" style="font-size:1.6rem">Results</div>
+        <button class="btn btn-outline btn-sm" onclick="resetSim()">↩ Reset</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchSimTab('races',this)">Race Results</button>
+        <button class="tab" onclick="switchSimTab('standings',this)">Standings</button>
+      </div>
+      <div id="sim-tab-races">
+        <div class="sim-results" id="sim-race-results"></div>
+      </div>
+      <div id="sim-tab-standings" style="display:none">
+        <div class="sim-results">
+          <table class="standings-table">
+            <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th></tr></thead>
+            <tbody id="sim-standings-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH PAGE -->
+<div class="page" id="page-search">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Driver Search</div>
+      <div class="section-subtitle">All eras, all drivers</div>
+    </div>
+    <div class="search-bar-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Search drivers by name, team, or nationality..." oninput="doSearch()">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="search-filters">
+      <button class="btn btn-outline btn-sm" onclick="filterSearch('era','all',this)">All Eras</button>
+      <button class="btn btn-outline btn-sm" onclick="filterSearch('era','modern',this)">Modern (2000+)</button>
+      <button class="btn btn-outline btn-sm" onclick="filterSearch('era','classic',this)">Classic</button>
+      <button class="btn btn-outline btn-sm" onclick="filterSearch('era','2026',this)">2026 Grid</button>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<!-- PACK OPENING OVERLAY -->
+<div class="pack-opening-overlay" id="pack-overlay">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold)">Opening Pack...</div>
+  <div class="pack-animation" id="pack-anim">📦</div>
+  <div class="reveal-cards" id="reveal-cards"></div>
+  <button class="btn btn-red" id="pack-done-btn" style="display:none" onclick="closePackOverlay()">Collect Cards</button>
+</div>
+
+<!-- CARD SELECT MODAL -->
+<div class="modal-overlay" id="card-select-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Select Card</div>
+      <button class="modal-close" onclick="closeModal('card-select-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="card-select-grid" id="card-select-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DRIVER DETAIL MODAL -->
+<div class="modal-overlay" id="driver-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="dm-name">Driver</div>
+      <button class="modal-close" onclick="closeModal('driver-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="dm-body"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ===================== DATA =====================
+const DRIVERS = [
+  // 2026 Grid
+  {id:1,name:"Max Verstappen",nat:"🇳🇱 Netherlands",team:"Red Bull Racing",num:1,era:"2026",rating:98,pace:99,race:97,defend:95,wet:96,champs:4,wins:62,poles:40,type:"driver"},
+  {id:2,name:"Lando Norris",nat:"🇬🇧 United Kingdom",team:"McLaren",num:4,era:"2026",rating:94,pace:96,race:93,defend:89,wet:91,champs:0,wins:5,poles:10,type:"driver"},
+  {id:3,name:"Carlos Sainz",nat:"🇪🇸 Spain",team:"Williams",num:55,era:"2026",rating:89,pace:88,race:90,defend:87,wet:85,champs:0,wins:4,poles:5,type:"driver"},
+  {id:4,name:"Charles Leclerc",nat:"🇲🇨 Monaco",team:"Ferrari",num:16,era:"2026",rating:92,pace:95,race:89,defend:86,wet:88,champs:0,wins:8,poles:24,type:"driver"},
+  {id:5,name:"Lewis Hamilton",nat:"🇬🇧 United Kingdom",team:"Ferrari",num:44,era:"2026",rating:95,pace:92,race:96,defend:94,wet:97,champs:7,wins:103,poles:104,type:"driver"},
+  {id:6,name:"George Russell",nat:"🇬🇧 United Kingdom",team:"Mercedes",num:63,era:"2026",rating:90,pace:91,race:89,defend:87,wet:86,champs:0,wins:3,poles:8,type:"driver"},
+  {id:7,name:"Oscar Piastri",nat:"🇦🇺 Australia",team:"McLaren",num:81,era:"2026",rating:91,pace:92,race:90,defend:87,wet:84,champs:0,wins:4,poles:6,type:"driver"},
+  {id:8,name:"Fernando Alonso",nat:"🇪🇸 Spain",team:"Aston Martin",num:14,era:"2026",rating:91,pace:88,race:93,defend:95,wet:93,champs:2,wins:32,poles:22,type:"driver"},
+  {id:9,name:"Lance Stroll",nat:"🇨🇦 Canada",team:"Aston Martin",num:18,era:"2026",rating:78,pace:79,race:78,defend:76,wet:75,champs:0,wins:0,poles:1,type:"driver"},
+  {id:10,name:"Kimi Antonelli",nat:"🇮🇹 Italy",team:"Mercedes",num:12,era:"2026",rating:83,pace:85,race:81,defend:79,wet:78,champs:0,wins:0,poles:0,type:"driver"},
+  {id:11,name:"Isack Hadjar",nat:"🇫🇷 France",team:"Racing Bulls",num:6,era:"2026",rating:80,pace:82,race:78,defend:77,wet:75,champs:0,wins:0,poles:0,type:"driver"},
+  {id:12,name:"Yuki Tsunoda",nat:"🇯🇵 Japan",team:"Red Bull Racing",num:22,era:"2026",rating:85,pace:86,race:84,defend:82,wet:80,champs:0,wins:0,poles:1,type:"driver"},
+  // Legends
+  {id:20,name:"Michael Schumacher",nat:"🇩🇪 Germany",team:"Ferrari (2004)",num:1,era:"classic",rating:99,pace:99,race:99,defend:97,wet:95,champs:7,wins:91,poles:68,type:"driver"},
+  {id:21,name:"Ayrton Senna",nat:"🇧🇷 Brazil",team:"McLaren (1988)",num:12,era:"classic",rating:99,pace:99,race:98,defend:96,wet:99,champs:3,wins:41,poles:65,type:"driver"},
+  {id:22,name:"Alain Prost",nat:"🇫🇷 France",team:"McLaren (1989)",num:1,era:"classic",rating:97,pace:95,race:98,defend:96,wet:88,champs:4,wins:51,poles:33,type:"driver"},
+  {id:23,name:"Niki Lauda",nat:"🇦🇹 Austria",team:"Ferrari (1975)",num:1,era:"classic",rating:96,pace:94,race:96,defend:97,wet:89,champs:3,wins:25,poles:24,type:"driver"},
+  {id:24,name:"Jim Clark",nat:"🇬🇧 Scotland",team:"Lotus (1965)",num:1,era:"classic",rating:97,pace:98,race:97,defend:90,wet:92,champs:2,wins:25,poles:33,type:"driver"},
+  {id:25,name:"Sebastian Vettel",nat:"🇩🇪 Germany",team:"Red Bull (2013)",num:1,era:"modern",rating:96,pace:95,race:96,defend:93,wet:89,champs:4,wins:53,poles:57,type:"driver"},
+  {id:26,name:"Jenson Button",nat:"🇬🇧 United Kingdom",team:"Brawn GP (2009)",num:22,era:"modern",rating:88,pace:86,race:92,defend:87,wet:90,champs:1,wins:15,poles:8,type:"driver"},
+  {id:27,name:"Kimi Räikkönen",nat:"🇫🇮 Finland",team:"Ferrari (2007)",num:6,era:"modern",rating:92,pace:93,race:90,defend:88,wet:91,champs:1,wins:21,poles:18,type:"driver"},
+  {id:28,name:"Nico Rosberg",nat:"🇩🇪 Germany",team:"Mercedes (2016)",num:6,era:"modern",rating:87,pace:88,race:88,defend:84,wet:82,champs:1,wins:23,poles:30,type:"driver"},
+  // Cars
+  {id:100,name:"Ferrari F2004",nat:"🇮🇹 Italy",team:"Ferrari",era:"classic",rating:97,speed:97,downforce:94,reliability:90,type:"car",desc:"Schumacher's dominant title-winner"},
+  {id:101,name:"McLaren MP4/4",nat:"🇬🇧 United Kingdom",team:"McLaren",era:"classic",rating:98,speed:96,downforce:93,reliability:88,type:"car",desc:"Senna & Prost's championship machine — 15 of 16 wins in 1988"},
+  {id:102,name:"Red Bull RB9",nat:"🇦🇹 Austria",team:"Red Bull",era:"modern",rating:95,speed:96,downforce:98,reliability:87,type:"car",desc:"Vettel's 4th consecutive championship weapon"},
+  {id:103,name:"Mercedes W11",nat:"🇩🇪 Germany",team:"Mercedes",era:"modern",rating:99,speed:98,downforce:97,reliability:96,type:"car",desc:"The most dominant F1 car ever built"},
+  {id:104,name:"Brawn BGP001",nat:"🇬🇧 United Kingdom",team:"Brawn GP",era:"modern",rating:91,speed:90,downforce:92,reliability:89,type:"car",desc:"The miracle car from a reborn team"},
+  {id:105,name:"Red Bull RB19",nat:"🇦🇹 Austria",team:"Red Bull",era:"modern",rating:98,speed:97,downforce:98,reliability:94,type:"car",desc:"Verstappen's 2023 near-perfect machine"},
+  {id:106,name:"Lotus 49",nat:"🇬🇧 United Kingdom",team:"Lotus",era:"classic",rating:88,speed:87,downforce:70,reliability:75,type:"car",desc:"First car with Ford Cosworth DFV engine"},
+];
+
+const QUIZ_CATEGORIES = [
+  {id:"history",name:"F1 History",icon:"📜",color:"#E8002D",desc:"Legends, records, and iconic moments",questions:[
+    {q:"Who holds the record for most F1 World Championship titles?",opts:["Michael Schumacher","Lewis Hamilton","Juan Manuel Fangio","Ayrton Senna"],a:1,exp:"Lewis Hamilton and Michael Schumacher both hold 7 titles."},
+    {q:"In which year was the first Formula 1 World Championship held?",opts:["1948","1950","1952","1955"],a:1,exp:"The inaugural F1 World Championship was held in 1950."},
+    {q:"Which team has won the most Constructors' Championships?",opts:["McLaren","Red Bull","Williams","Ferrari"],a:3,exp:"Ferrari leads with 16 Constructors' Championships."},
+    {q:"Ayrton Senna tragically died at which circuit in 1994?",opts:["Monaco","Monza","Imola","Silverstone"],a:2,exp:"Senna died at Imola's San Marino Grand Prix in 1994."},
+    {q:"Who was the first F1 World Champion?",opts:["Alberto Ascari","Giuseppe Farina","Juan Manuel Fangio","Stirling Moss"],a:1,exp:"Giuseppe Farina won the 1950 Formula 1 World Championship."},
+    {q:"Which driver is known as 'The Professor'?",opts:["Niki Lauda","Alain Prost","Jackie Stewart","Emerson Fittipaldi"],a:1,exp:"Alain Prost earned this nickname for his calculated, analytical driving."},
+    {q:"How many times did Michael Schumacher win the F1 World Championship?",opts:["5","6","7","8"],a:2,exp:"Schumacher won 7 titles — 5 consecutive from 2000-2004."},
+    {q:"Which country hosted the first ever F1 Grand Prix in 1950?",opts:["France","Italy","Germany","Great Britain"],a:3,exp:"The 1950 British Grand Prix at Silverstone was the first championship race."},
+    {q:"Who is the youngest F1 World Champion ever?",opts:["Max Verstappen","Sebastian Vettel","Fernando Alonso","Kimi Räikkönen"],a:1,exp:"Sebastian Vettel won his first title at 23 years old in 2010."},
+    {q:"What was the famous rivalry between Senna and this driver at McLaren?",opts:["Nigel Mansell","Niki Lauda","Alain Prost","Nelson Piquet"],a:2,exp:"The Senna–Prost rivalry was one of the greatest and most fierce in F1 history."},
+  ]},
+  {id:"circuits",name:"Circuits",icon:"🗺️",color:"#2979ff",desc:"Tracks, corners, and lap record trivia",questions:[
+    {q:"Which is the longest circuit currently on the F1 calendar?",opts:["Spa-Francorchamps","Monza","Suzuka","Baku"],a:0,exp:"Spa-Francorchamps is 7.004km long, the longest on the calendar."},
+    {q:"The Monaco Grand Prix is held through the streets of which principality?",opts:["Andorra","San Marino","Monaco","Liechtenstein"],a:2,exp:"Monaco — one of the most iconic street circuits in motorsport."},
+    {q:"What is the famous high-speed section at Spa called?",opts:["Lesmo","Eau Rouge / Raidillon","Maggotts-Becketts","Copse"],a:1,exp:"Eau Rouge / Raidillon is the most famous corner sequence at Spa."},
+    {q:"Suzuka circuit is located in which country?",opts:["South Korea","China","Japan","Malaysia"],a:2,exp:"Suzuka is in Mie Prefecture, Japan."},
+    {q:"The 'Tunnel' corner is found at which F1 circuit?",opts:["Melbourne","Monaco","Baku","Jeddah"],a:1,exp:"The Monaco circuit runs through a tunnel near the harbor."},
+    {q:"Monza is nicknamed what?",opts:["The Cathedral","The Temple of Speed","The Flying Lap","The Snake"],a:1,exp:"Monza is known as the 'Temple of Speed' due to its fast, low-downforce layout."},
+    {q:"Which circuit hosted the first US Grand Prix in 1959?",opts:["Watkins Glen","Indianapolis Motor Speedway","Sebring","Long Beach"],a:1,exp:"Sebring hosted the inaugural US Grand Prix in 1959."},
+    {q:"What is the famous last corner at Circuit de Catalunya called?",opts:["La Caixa","Turn 10","Repsol","Seat"],a:0,exp:"La Caixa is the famous chicane complex at the Spanish Grand Prix circuit."},
+    {q:"Which circuit features the 'Wall of Champions'?",opts:["Imola","Canada (Gilles Villeneuve)","Zandvoort","Interlagos"],a:1,exp:"The Circuit Gilles Villeneuve in Montreal features the infamous Wall of Champions."},
+    {q:"Interlagos is the home circuit of which country's Grand Prix?",opts:["Argentina","Mexico","Colombia","Brazil"],a:3,exp:"Interlagos (officially Autódromo José Carlos Pace) hosts the Brazilian Grand Prix."},
+  ]},
+  {id:"stats",name:"Stats & Records",icon:"📊",color:"#00c853",desc:"Numbers, records, and milestones",questions:[
+    {q:"How many wins does Lewis Hamilton have? (as of end 2024)",opts:["91","97","103","112"],a:2,exp:"Lewis Hamilton has 103 Grand Prix wins."},
+    {q:"Who holds the record for most pole positions?",opts:["Ayrton Senna","Michael Schumacher","Lewis Hamilton","Sebastian Vettel"],a:2,exp:"Lewis Hamilton has 104 pole positions."},
+    {q:"What is the maximum number of points awarded for winning a race?",opts:["10","25","26","50"],a:1,exp:"The winner receives 25 points, plus 1 bonus point for fastest lap if in top 10."},
+    {q:"Max Verstappen won how many races in the 2023 season?",opts:["15","17","19","21"],a:2,exp:"Verstappen won 19 of 22 races in 2023, a record."},
+    {q:"Who scored the first ever F1 Grand Prix point?",opts:["Giuseppe Farina","Juan Manuel Fangio","Luigi Fagioli","Alberto Ascari"],a:0,exp:"Giuseppe Farina scored the first points at the 1950 British Grand Prix."},
+    {q:"What speed did Valtteri Bottas achieve for the fastest ever F1 lap? (approx)",opts:["320 km/h","370 km/h","372.5 km/h","400 km/h"],a:2,exp:"Bottas hit 372.5 km/h at Monza in 2019."},
+    {q:"Which team scored 1-2 finishes in 15 of 16 races in 1988?",opts:["Ferrari","Williams","McLaren","Lotus"],a:2,exp:"McLaren dominated 1988 with the MP4/4, winning 15 of 16 races."},
+    {q:"What is the most number of laps led in a single season (approx, recent record)?",opts:["700","900","1200","1500"],a:2,exp:"Verstappen led approximately 1200+ laps in 2023."},
+    {q:"Who has the record for most fastest laps?",opts:["Michael Schumacher","Lewis Hamilton","Kimi Räikkönen","Nico Rosberg"],a:1,exp:"Lewis Hamilton leads with 67 fastest laps."},
+    {q:"In what year was the points system changed to the current 25-18-15-12-10-8-6-4-2-1 format?",opts:["2002","2005","2010","2014"],a:2,exp:"The current 25-point system was introduced in 2010."},
+  ]},
+  {id:"teams",name:"Constructor Teams",icon:"🏭",color:"#aa00ff",desc:"Teams, liveries, and constructor trivia",questions:[
+    {q:"Ferrari's famous red color is known as what in Italian?",opts:["Rosso Ferrari","Rosso Corsa","Rossa Italiana","Rosso Scuderia"],a:1,exp:"Rosso Corsa ('racing red') is the official name for Ferrari's iconic color."},
+    {q:"McLaren was founded by which driver?",opts:["Ron Dennis","Bruce McLaren","Colin Chapman","Jack Brabham"],a:1,exp:"New Zealander Bruce McLaren founded the team in 1963."},
+    {q:"Which team is based in Enstone, UK?",opts:["Alpine","Williams","Haas","Sauber"],a:0,exp:"Alpine F1 (formerly Renault) is based in Enstone, Oxfordshire."},
+    {q:"Red Bull Racing's sister team was formerly known as what?",opts:["AlphaTauri","Toro Rosso","Minardi","Jaguar"],a:1,exp:"Red Bull's junior team was called Toro Rosso, before rebranding to AlphaTauri then Racing Bulls."},
+    {q:"Williams F1 was founded by Frank Williams in which year?",opts:["1969","1975","1977","1980"],a:2,exp:"Williams F1 was founded in 1977 by Sir Frank Williams and Patrick Head."},
+    {q:"Which team introduced the revolutionary 'Ground Effect' car in 1977?",opts:["Ferrari","Brabham","Lotus","Tyrrell"],a:2,exp:"Lotus introduced the revolutionary Lotus 78 with ground effect aerodynamics."},
+    {q:"Aston Martin returned to F1 as a works team in which year?",opts:["2019","2020","2021","2022"],a:2,exp:"Aston Martin returned as a full works team in 2021, after previously racing as Racing Point."},
+    {q:"Which team won the 2009 Constructors' Championship as a brand new entry?",opts:["Brawn GP","Virgin Racing","HRT","Lotus"],a:0,exp:"Brawn GP emerged from the ashes of Honda Racing and won the title in their only season."},
+    {q:"Mercedes-Benz returned to F1 as a works team in which year?",opts:["2008","2010","2012","2014"],a:1,exp:"Mercedes returned as a full works team in 2010, going on to dominate the hybrid era."},
+    {q:"Which team is headquartered in Maranello, Italy?",opts:["Alfa Romeo","Ferrari","Haas","AlphaTauri"],a:1,exp:"Ferrari has been based in Maranello since 1947."},
+  ]},
+  {id:"2026",name:"2026 Season",icon:"🏎",color:"#FFD700",desc:"The current season and regulations",questions:[
+    {q:"What power unit regulation changes came into effect in 2026?",opts:["V8 return","New hybrid with 50:50 electrical split","V6 turbo ban","No ERS"],a:1,exp:"2026 brought a new hybrid formula with roughly 50% electrical power contribution."},
+    {q:"Which team did Lewis Hamilton join in 2025?",opts:["Red Bull","McLaren","Ferrari","Aston Martin"],a:2,exp:"Hamilton made a historic move to Ferrari for 2025."},
+    {q:"What is Lando Norris's car number?",opts:["4","16","63","81"],a:0,exp:"Lando Norris races with the number 4."},
+    {q:"Which driver joined Red Bull Racing as Verstappen's partner in 2024?",opts:["Sergio Perez","Liam Lawson","Yuki Tsunoda","Daniel Ricciardo"],a:2,exp:"Yuki Tsunoda became Verstappen's partner at Red Bull Racing."},
+    {q:"Which young Italian driver joined Mercedes from F2 in 2025?",opts:["Antonelli","Bearman","Colapinto","Hauger"],a:0,exp:"Kimi Antonelli joined Mercedes as Hamilton's replacement."},
+    {q:"What major technical regulation change affected car dimensions in 2022?",opts:["Smaller cars","Return to ground effect aero","V6 engines","Active suspension"],a:1,exp:"The 2022 regulations brought back ground effect aerodynamics, dramatically changing car design."},
+    {q:"Who won the 2024 F1 Drivers' Championship?",opts:["Lando Norris","Carlos Sainz","Charles Leclerc","Max Verstappen"],a:3,exp:"Max Verstappen won his 4th consecutive Drivers' Championship in 2024."},
+    {q:"Where is the Aston Martin F1 factory located?",opts:["Silverstone","Banbury","Brackley","Leafield"],a:0,exp:"Aston Martin Aramco F1 is based at Silverstone, Northamptonshire."},
+    {q:"How many Sprint Races were held in the 2024 F1 season?",opts:["4","5","6","8"],a:2,exp:"There were 6 Sprint weekends on the 2024 F1 calendar."},
+    {q:"What nationality is Oscar Piastri?",opts:["British","New Zealand","Canadian","Australian"],a:3,exp:"Oscar Piastri is Australian, hailing from Melbourne."},
+  ]},
+];
+
+const PACKS = [
+  {id:"starter",name:"Starter Pack",icon:"📦",color:"#2a2a2a",desc:"3 common cards — great to begin your collection",price:100,count:3,rarityWeights:{common:85,rare:15,epic:0,legendary:0},banner:"#1a1a1a"},
+  {id:"premium",name:"Premium Pack",icon:"🔷",color:"#001a4a",desc:"5 cards with guaranteed rare",price:250,count:5,rarityWeights:{common:50,rare:35,epic:13,legendary:2},banner:"#001230"},
+  {id:"legend",name:"Legend Pack",icon:"🌟",color:"#1a1100",desc:"5 cards — boosted legendary chance!",price:600,count:5,rarityWeights:{common:20,rare:30,epic:35,legendary:15},banner:"#2a1e00"},
+  {id:"classic",name:"Classic Era Pack",icon:"🏆",color:"#0d001a",desc:"Historic drivers & cars from the golden era",price:350,count:5,rarityWeights:{common:40,rare:35,epic:20,legendary:5},banner:"#1a0035",era:"classic"},
+  {id:"modern",name:"Modern Era Pack",icon:"🔥",color:"#001a00",desc:"Hybrid era legends and champions",price:350,count:5,rarityWeights:{common:40,rare:35,epic:20,legendary:5},banner:"#002a00",era:"modern"},
+  {id:"mega",name:"Mega Bundle",icon:"💎",color:"#1a0000",desc:"10 cards — best value, high rarity odds",price:900,count:10,rarityWeights:{common:30,rare:35,epic:25,legendary:10},banner:"#2a0000"},
+];
+
+const RACES_2026 = [
+  {id:"r1",name:"Bahrain GP",flag:"🇧🇭",date:"Mar 15, 2026",status:"settled",winner:"Verstappen"},
+  {id:"r2",name:"Saudi Arabian GP",flag:"🇸🇦",date:"Mar 22, 2026",status:"settled",winner:"Norris"},
+  {id:"r3",name:"Australian GP",flag:"🇦🇺",date:"Apr 6, 2026",status:"settled",winner:"Hamilton"},
+  {id:"r4",name:"Japanese GP",flag:"🇯🇵",date:"Apr 13, 2026",status:"open"},
+  {id:"r5",name:"Chinese GP",flag:"🇨🇳",date:"Apr 27, 2026",status:"open"},
+  {id:"r6",name:"Miami GP",flag:"🇺🇸",date:"May 4, 2026",status:"open"},
+  {id:"r7",name:"Emilia Romagna GP",flag:"🇮🇹",date:"May 18, 2026",status:"open"},
+  {id:"r8",name:"Monaco GP",flag:"🇲🇨",date:"May 25, 2026",status:"open"},
+  {id:"r9",name:"Canadian GP",flag:"🇨🇦",date:"Jun 8, 2026",status:"open"},
+  {id:"r10",name:"Spanish GP",flag:"🇪🇸",date:"Jun 22, 2026",status:"open"},
+];
+
+const BET_DRIVERS = [
+  {name:"Verstappen",odds:1.9},{name:"Norris",odds:3.2},{name:"Leclerc",odds:5.5},
+  {name:"Hamilton",odds:6.0},{name:"Piastri",odds:8.0},{name:"Russell",odds:12.0},
+  {name:"Alonso",odds:20.0},{name:"Sainz",odds:25.0},{name:"Tsunoda",odds:50.0},{name:"Antonelli",odds:40.0}
+];
+
+const CHAMP_ODDS = [
+  {name:"Verstappen",odds:2.2},{name:"Norris",odds:3.5},{name:"Hamilton",odds:7.0},
+  {name:"Leclerc",odds:8.0},{name:"Piastri",odds:10.0},{name:"Russell",odds:15.0},
+  {name:"Alonso",odds:30.0},{name:"Sainz",odds:40.0}
+];
+
+const F1_TEAMS = {
+  "Red Bull Racing":"#3671C6","McLaren":"#FF8000","Ferrari":"#E8002D","Mercedes":"#27F4D2",
+  "Aston Martin":"#358C75","Alpine":"#FF87BC","Williams":"#64C4FF","Racing Bulls":"#6692FF",
+  "Kick Sauber":"#52E252","Haas":"#B6BABD","Ferrari (2004)":"#E8002D","McLaren (1988)":"#FF8000",
+  "McLaren (1989)":"#FF8000","Red Bull (2013)":"#3671C6","Brawn GP (2009)":"#B4FD00",
+  "Ferrari (2007)":"#E8002D","Mercedes (2016)":"#00D2BE","Lotus (1965)":"#1C3866","Lotus":"#1C3866"
+};
+
+// ===================== STATE =====================
+let state = {
+  coins: 500,
+  collection: [],
+  bets: [],
+  championBet: null,
+  quiz: {active:false,cat:null,qIdx:0,score:0,answers:[],timer:null,timerVal:15},
+  sim: {driver1:null,driver2:null,car:null,results:null},
+  cardSelectSlot: null,
+  searchFilter: 'all',
+};
+
+// ===================== UTILS =====================
+function save(){localStorage.setItem('apexf1',JSON.stringify(state))}
+function load(){try{const d=localStorage.getItem('apexf1');if(d)state={...state,...JSON.parse(d)}}catch(e){}}
+function getTeamColor(team){return F1_TEAMS[team]||"#888"}
+function toast(msg,type="gold",duration=3000){
+  const t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>t.style.opacity='0',duration-400);
+  setTimeout(()=>t.remove(),duration);
+}
+function updateCoins(){document.getElementById('coins-display').textContent=state.coins.toLocaleString()}
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page)?.classList.add('active');
+  if(page==='quiz')showQuizCategories();
+  if(page==='cards'){renderShop();renderCollection()}
+  if(page==='bet')renderBetting();
+  if(page==='sim')renderSim();
+  if(page==='search'){renderSearch();doSearch()}
+  window.scrollTo(0,0);
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// ===================== QUIZ =====================
+function showQuizCategories(){
+  state.quiz.active=false;clearInterval(state.quiz.timer);
+  document.getElementById('quiz-category-view').style.display='';
+  document.getElementById('quiz-active-view').style.display='none';
+  document.getElementById('quiz-result-view').style.display='none';
+  const el=document.getElementById('quiz-cats');
+  el.innerHTML=QUIZ_CATEGORIES.map(c=>`
+    <div class="quiz-cat" style="--cat-color:${c.color}" onclick="startQuiz('${c.id}')">
+      <span class="quiz-cat-icon">${c.icon}</span>
+      <div class="quiz-cat-name">${c.name}</div>
+      <div class="quiz-cat-desc">${c.desc}</div>
+      <div class="quiz-cat-reward">🪙 Up to ${c.questions.length*30} coins</div>
+    </div>`).join('');
+}
+
+function startQuiz(catId){
+  const cat=QUIZ_CATEGORIES.find(c=>c.id===catId);
+  state.quiz={active:true,cat:cat,qIdx:0,score:0,answers:[],timer:null,timerVal:15};
+  document.getElementById('quiz-category-view').style.display='none';
+  document.getElementById('quiz-active-view').style.display='';
+  document.getElementById('quiz-result-view').style.display='none';
+  showQuestion();
+}
+
+function showQuestion(){
+  const {cat,qIdx}=state.quiz;const q=cat.questions[qIdx];
+  document.getElementById('qnum').textContent=`Q${qIdx+1} / ${cat.questions.length}`;
+  document.getElementById('qprogress').style.width=`${((qIdx+1)/cat.questions.length)*100}%`;
+  document.getElementById('quiz-q-text').textContent=q.q;
+  const optHtml=q.opts.map((o,i)=>`
+    <button class="quiz-option" onclick="answerQuiz(${i})" id="qopt${i}">
+      <span class="quiz-option-key">${['A','B','C','D'][i]}</span>${o}
+    </button>`).join('');
+  document.getElementById('quiz-options').innerHTML=optHtml;
+  startTimer();
+}
+
+function startTimer(){
+  state.quiz.timerVal=15;clearInterval(state.quiz.timer);
+  document.getElementById('qtimer').textContent='⏱ 15s';
+  state.quiz.timer=setInterval(()=>{
+    state.quiz.timerVal--;document.getElementById('qtimer').textContent=`⏱ ${state.quiz.timerVal}s`;
+    if(state.quiz.timerVal<=0){clearInterval(state.quiz.timer);answerQuiz(-1)}
+  },1000);
+}
+
+function answerQuiz(idx){
+  clearInterval(state.quiz.timer);
+  const {cat,qIdx}=state.quiz;const q=cat.questions[qIdx];
+  const correct=idx===q.a;
+  if(correct)state.quiz.score++;
+  document.querySelectorAll('.quiz-option').forEach((el,i)=>{
+    el.classList.add('locked');
+    if(i===q.a)el.classList.add('correct');
+    else if(i===idx&&!correct)el.classList.add('wrong');
+  });
+  setTimeout(()=>{
+    state.quiz.qIdx++;
+    if(state.quiz.qIdx>=cat.questions.length)finishQuiz();
+    else showQuestion();
+  },1200);
+}
+
+function finishQuiz(){
+  const {score,cat}=state.quiz;const total=cat.questions.length;
+  const earned=score*30;
+  state.coins+=earned;updateCoins();save();
+  document.getElementById('quiz-active-view').style.display='none';
+  document.getElementById('quiz-result-view').style.display='';
+  const pct=score/total;
+  let emoji='😅';if(pct>=0.8)emoji='🏆';else if(pct>=0.5)emoji='👍';
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-score').textContent=`${score}/${total}`;
+  document.getElementById('result-earned').textContent=`You earned 🪙 ${earned} coins!`;
+  if(earned>0)toast(`🧠 Quiz complete! +${earned} coins earned!`,'gold');
+}
+
+// ===================== CARDS / SHOP =====================
+function switchCardTab(tab,el){
+  document.querySelectorAll('#page-cards .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('card-tab-shop').style.display=tab==='shop'?'':'none';
+  document.getElementById('card-tab-collection').style.display=tab==='collection'?'':'none';
+  if(tab==='collection')renderCollection();
+}
+
+function renderShop(){
+  document.getElementById('shop-grid').innerHTML=PACKS.map(p=>`
+    <div class="pack-card" onclick="buyPack('${p.id}')">
+      <div class="pack-banner" style="background:${p.banner||p.color}">${p.icon}</div>
+      <div class="pack-info">
+        <div class="pack-name">${p.name}</div>
+        <div class="pack-desc">${p.desc}</div>
+        <div class="pack-price">🪙 ${p.price.toLocaleString()}</div>
+        <div class="pack-odds">${p.count} cards | ${Object.entries(p.rarityWeights).filter(([k,v])=>v>0).map(([k,v])=>k+':'+v+'%').join(' | ')}</div>
+      </div>
+    </div>`).join('');
+}
+
+function buyPack(packId){
+  const pack=PACKS.find(p=>p.id===packId);
+  if(state.coins<pack.price){toast('❌ Not enough coins!','red');return}
+  state.coins-=pack.price;updateCoins();
+  const cards=generatePackCards(pack);
+  state.collection.push(...cards);save();
+  showPackOpening(pack.icon,cards);
+}
+
+function generatePackCards(pack){
+  const pool=DRIVERS.filter(d=>pack.era?d.era===pack.era:true);
+  const results=[];
+  for(let i=0;i<pack.count;i++){
+    const rarity=rollRarity(pack.rarityWeights);
+    const eligible=pool.filter(d=>cardRarity(d.rating)===rarity);
+    const all=pool;
+    const src=eligible.length>0?eligible:all;
+    const d=src[Math.floor(Math.random()*src.length)];
+    results.push({...d,rarity,uid:Date.now()+Math.random()});
+  }
+  return results;
+}
+
+function rollRarity(w){
+  const r=Math.random()*100;let acc=0;
+  for(const[k,v] of Object.entries(w)){acc+=v;if(r<acc)return k}
+  return 'common';
+}
+
+function cardRarity(rating){
+  if(rating>=97)return'legendary';if(rating>=92)return'epic';if(rating>=85)return'rare';return'common';
+}
+
+function showPackOpening(icon,cards){
+  const overlay=document.getElementById('pack-overlay');
+  overlay.classList.add('open');
+  document.getElementById('pack-anim').textContent=icon;
+  document.getElementById('reveal-cards').innerHTML='';
+  document.getElementById('pack-done-btn').style.display='none';
+  setTimeout(()=>{
+    const rc=document.getElementById('reveal-cards');
+    cards.forEach((c,i)=>{
+      setTimeout(()=>{
+        const el=document.createElement('div');
+        el.className='reveal-card';
+        el.style.animationDelay=`${i*0.12}s`;
+        el.innerHTML=renderCardMini(c);
+        rc.appendChild(el);
+        if(i===cards.length-1)setTimeout(()=>{document.getElementById('pack-done-btn').style.display='';},600);
+      },i*200);
+    });
+  },800);
+}
+
+function closePackOverlay(){
+  document.getElementById('pack-overlay').classList.remove('open');
+  toast(`🃏 Cards added to your collection!`,'gold');
+}
+
+function renderCardMini(c){
+  const tc=getTeamColor(c.team||'');const rc=rarityColor(c.rarity);
+  if(c.type==='car')return`<div class="card common-bg" style="background:linear-gradient(135deg,#0a0a0a,#1a1a1a);border:1px solid ${rc};border-radius:8px;padding:12px">
+    <div class="card-rarity-badge rarity-${c.rarity}" style="position:relative;top:0;right:0;display:inline-block;margin-bottom:8px">${c.rarity}</div>
+    <div style="font-size:1.4rem;margin-bottom:4px">🏎</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.9rem;text-transform:uppercase;line-height:1">${c.name}</div>
+    <div style="font-size:.65rem;color:${rc};margin-top:6px;font-family:'Share Tech Mono',monospace">${c.rating} OVR</div>
+  </div>`;
+  return`<div class="card ${c.rarity}-bg" style="border:1px solid ${rc};border-radius:8px;overflow:hidden">
+    <div style="height:4px;background:${tc}"></div>
+    <div style="padding:10px;position:relative">
+      <div class="card-rarity-badge rarity-${c.rarity}" style="position:absolute;top:6px;right:6px">${c.rarity}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;text-transform:uppercase;line-height:1;margin-top:8px">${c.name}</div>
+      <div style="font-size:.65rem;color:var(--text-dim);margin:2px 0 6px">${c.nat||''}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:${rc}">${c.rating} OVR</div>
+    </div>
+  </div>`;
+}
+
+function rarityColor(r){
+  const m={common:'#555',rare:'#2979ff',epic:'#aa00ff',legendary:'#FFD700'};return m[r]||'#555';
+}
+
+function renderCollection(){
+  const grid=document.getElementById('collection-grid');
+  document.getElementById('collection-count').textContent=`${state.collection.length} cards`;
+  if(state.collection.length===0){
+    grid.innerHTML=`<div class="empty-collection" style="grid-column:1/-1"><div class="icon">🃏</div><div>No cards yet! Buy packs in the shop.</div></div>`;
+    return;
+  }
+  grid.innerHTML=state.collection.map((c,i)=>{
+    const tc=getTeamColor(c.team||'');const rc=rarityColor(c.rarity);
+    return`<div class="collection-card" onclick="showDriverModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+      <div style="height:4px;background:${tc}"></div>
+      <div class="card-inner" style="position:relative">
+        <div class="card-rarity-badge rarity-${c.rarity}" style="position:absolute;top:0;right:0">${c.rarity}</div>
+        <div style="font-size:${c.type==='car'?'1.6rem':'0'}rem;margin:8px 0">${c.type==='car'?'🏎':''}</div>
+        <div class="card-name" style="margin-top:${c.type==='car'?0:16}px">${c.name}</div>
+        <div style="font-size:.75rem;color:var(--text-dim);margin:2px 0 8px">${c.team||''} ${c.num?'#'+c.num:''}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.75rem;color:${rc}">${c.rating} OVR</div>
+        ${c.type==='driver'?`<div class="card-stats" style="margin-top:10px">
+          <div class="card-stat"><div class="card-stat-label">Pace</div><div class="card-stat-val">${c.pace}</div></div>
+          <div class="card-stat"><div class="card-stat-label">Race</div><div class="card-stat-val">${c.race}</div></div>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showDriverModal(c){
+  document.getElementById('dm-name').textContent=c.name;
+  const tc=getTeamColor(c.team||'');
+  if(c.type==='car'){
+    document.getElementById('dm-body').innerHTML=`
+      <div style="height:4px;background:${tc};margin:-20px -20px 20px"></div>
+      <div style="font-size:2rem;margin-bottom:8px">🏎</div>
+      <div style="font-size:.9rem;color:var(--text-dim);margin-bottom:16px">${c.desc||''}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:8px">CARD STATS</div>
+      <div class="card-stats">
+        <div class="card-stat"><div class="card-stat-label">Overall</div><div class="card-stat-val">${c.rating}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Speed</div><div class="card-stat-val">${c.speed}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Downforce</div><div class="card-stat-val">${c.downforce}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Reliability</div><div class="card-stat-val">${c.reliability}</div></div>
+      </div>`;
+  } else {
+    document.getElementById('dm-body').innerHTML=`
+      <div style="height:4px;background:${tc};margin:-20px -20px 20px"></div>
+      <div style="color:var(--text-dim);font-size:.85rem;margin-bottom:4px">${c.nat}</div>
+      <div style="font-size:.9rem;margin-bottom:16px">${c.team} · #${c.num}</div>
+      <div class="card-stats" style="grid-template-columns:repeat(3,1fr)">
+        <div class="card-stat"><div class="card-stat-label">Overall</div><div class="card-stat-val">${c.rating}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Pace</div><div class="card-stat-val">${c.pace}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Racecraft</div><div class="card-stat-val">${c.race}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Defence</div><div class="card-stat-val">${c.defend}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Wet Skill</div><div class="card-stat-val">${c.wet}</div></div>
+        <div class="card-stat"><div class="card-stat-label">Champs</div><div class="card-stat-val">${c.champs}</div></div>
+      </div>
+      <div class="divider"></div>
+      <div style="display:flex;gap:24px;font-size:.85rem;color:var(--text-dim)">
+        <div>🏆 <b style="color:var(--text)">${c.wins}</b> wins</div>
+        <div>⚡ <b style="color:var(--text)">${c.poles}</b> poles</div>
+      </div>`;
+  }
+  openModal('driver-modal');
+}
+
+// ===================== BETTING =====================
+let selectedBets={};
+let selectedChampDriver=null;
+
+function switchBetTab(tab,el){
+  document.querySelectorAll('#page-bet .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['markets','mybets','champion'].forEach(t=>{document.getElementById('bet-tab-'+t).style.display=t===tab?'':'none'});
+  if(tab==='mybets')renderMyBets();
+  if(tab==='champion')renderChampionBet();
+}
+
+function renderBetting(){
+  const grid=document.getElementById('race-bet-grid');
+  grid.innerHTML=RACES_2026.map(r=>{
+    const isOpen=r.status==='open';
+    const statusClass={'open':'status-open','closed':'status-closed','settled':'status-settled'}[r.status];
+    const statusLabel={'open':'🟢 Open','closed':'🔒 Closed','settled':'✅ Settled'}[r.status];
+    return`<div class="race-bet-card">
+      <div class="race-bet-header">
+        <span class="race-flag">${r.flag}</span>
+        <div>
+          <div class="race-name">${r.name}</div>
+          <div class="race-date">${r.date}</div>
+          ${r.winner?`<div style="font-size:.75rem;color:var(--gold);margin-top:2px">Winner: ${r.winner}</div>`:''}
+        </div>
+        <div class="race-status ${statusClass}" style="margin-left:auto">${statusLabel}</div>
+      </div>
+      ${isOpen?`<div class="bet-odds-row">${BET_DRIVERS.slice(0,6).map(d=>`
+        <div class="bet-option ${(selectedBets[r.id]?.driver===d.name)?'selected':''}" onclick="selectBetDriver('${r.id}','${d.name}',${d.odds},this)">
+          <div class="bet-driver-name">${d.name}</div>
+          <div class="bet-odds">×${d.odds}</div>
+        </div>`).join('')}
+      </div>
+      <div class="bet-controls">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.9rem">Stake:</span>
+        <input type="number" class="bet-amount-input" id="bet-amt-${r.id}" placeholder="50" min="10">
+        <button class="btn btn-gold btn-sm" onclick="placeBet('${r.id}','${r.name}')">Place Bet</button>
+      </div>`:'<div style="padding:12px 20px;font-size:.83rem;color:var(--text-dim)">${r.winner?`Winner: ${r.winner}`:"Market closed"}</div>'}
+    </div>`;
+  }).join('');
+}
+
+function selectBetDriver(raceId,driver,odds,el){
+  selectedBets[raceId]={driver,odds};
+  document.querySelectorAll(`[onclick*="${raceId}"]`).forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function placeBet(raceId,raceName){
+  const sel=selectedBets[raceId];if(!sel){toast('❌ Select a driver first','red');return}
+  const input=document.getElementById('bet-amt-'+raceId);const amt=parseInt(input.value)||50;
+  if(amt<10){toast('❌ Min bet is 10 coins','red');return}
+  if(state.coins<amt){toast('❌ Not enough coins!','red');return}
+  state.coins-=amt;updateCoins();
+  state.bets.push({raceId,raceName,driver:sel.driver,odds:sel.odds,stake:amt,potential:Math.round(amt*sel.odds),status:'pending'});
+  save();toast(`✅ Bet placed: ${sel.driver} to win ${raceName} (×${sel.odds})`,'green');
+  delete selectedBets[raceId];renderBetting();
+}
+
+function renderMyBets(){
+  const el=document.getElementById('my-bets-list');
+  const total=state.bets.reduce((a,b)=>a+b.stake,0);
+  document.getElementById('bets-summary').textContent=`${state.bets.length} bets · ${total} coins staked`;
+  if(state.bets.length===0){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-dim)">No bets placed yet.</div>`;return}
+  el.innerHTML=state.bets.map((b,i)=>`
+    <div class="my-bet">
+      <div class="my-bet-info">
+        <div class="my-bet-race">${b.raceName}</div>
+        <div class="my-bet-detail">${b.driver} · ×${b.odds}</div>
+      </div>
+      <div>
+        <div class="my-bet-amount">🪙 ${b.stake} staked</div>
+        <div style="font-size:.75rem;color:var(--green)">Potential: 🪙 ${b.potential}</div>
+      </div>
+      <div class="badge ${b.status==='pending'?'badge-red':'badge-gold'}">${b.status}</div>
+    </div>`).join('');
+}
+
+function renderChampionBet(){
+  const grid=document.getElementById('champion-bet-grid');
+  grid.innerHTML=CHAMP_ODDS.map(d=>`
+    <div class="bet-option ${selectedChampDriver===d.name?'selected':''}" onclick="selectChampDriver('${d.name}',this)" style="min-width:140px">
+      <div class="bet-driver-name">${d.name}</div>
+      <div class="bet-odds">×${d.odds}</div>
+    </div>`).join('');
+}
+
+function selectChampDriver(name,el){
+  selectedChampDriver=name;
+  document.querySelectorAll('#champion-bet-grid .bet-option').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function placeChampionBet(){
+  if(!selectedChampDriver){toast('❌ Select a driver','red');return}
+  const stake=parseInt(document.getElementById('champion-stake').value)||100;
+  if(stake<10){toast('❌ Min bet 10 coins','red');return}
+  if(state.coins<stake){toast('❌ Not enough coins','red');return}
+  const odd=CHAMP_ODDS.find(d=>d.name===selectedChampDriver);
+  state.coins-=stake;updateCoins();
+  state.bets.push({raceId:'wdc',raceName:'2026 WDC',driver:selectedChampDriver,odds:odd.odds,stake,potential:Math.round(stake*odd.odds),status:'pending'});
+  save();toast(`🏆 Championship bet placed: ${selectedChampDriver} ×${odd.odds}`,'gold');
+}
+
+// ===================== SIMULATION =====================
+function renderSim(){
+  updateSimSlot(1,state.sim.driver1);
+  updateSimSlot(2,state.sim.driver2);
+  updateSimSlotCar(state.sim.car);
+}
+
+function updateSimSlot(num,card){
+  const el=document.getElementById(`sim-slot-${num}`);
+  if(!card){el.innerHTML=`<span style="font-size:2rem">➕</span><div class="sim-slot-label">Driver ${num}</div>`;el.classList.remove('filled');return}
+  el.classList.add('filled');
+  const tc=getTeamColor(card.team);
+  el.innerHTML=`<div style="width:6px;height:40px;background:${tc};border-radius:3px;margin-bottom:8px"></div>
+    <div class="sim-slot-driver">${card.name}</div>
+    <div class="sim-slot-rating">OVR ${card.rating}</div>
+    <div style="font-size:.7rem;color:var(--text-dim);margin-top:4px">${card.team}</div>`;
+}
+
+function updateSimSlotCar(card){
+  const el=document.getElementById('sim-slot-car');
+  if(!card){el.innerHTML=`<span style="font-size:2rem">🏎</span><div class="sim-slot-label">Car Card (optional)</div>`;el.classList.remove('filled');return}
+  el.classList.add('filled');
+  el.innerHTML=`<span style="font-size:1.5rem">🏎</span><div class="sim-slot-driver" style="font-size:.95rem">${card.name}</div><div class="sim-slot-rating">OVR ${card.rating}</div>`;
+}
+
+function openCardSelect(slot){
+  state.cardSelectSlot=slot;
+  const grid=document.getElementById('card-select-grid');
+  const iscar=slot==='car';
+  const cards=state.collection.filter(c=>iscar?(c.type==='car'):(c.type==='driver'));
+  if(cards.length===0){toast('❌ No '+( iscar?'car':'driver')+' cards in collection! Open packs first.','red');return}
+  grid.innerHTML=cards.map((c,i)=>`
+    <div class="card-select-item" onclick="selectCardForSim(${i})">
+      ${c.type==='car'?'🏎 ':''}
+      <div class="card-select-name">${c.name}</div>
+      <div class="card-select-rat">OVR ${c.rating}</div>
+    </div>`).join('');
+  openModal('card-select-modal');
+}
+
+function selectCardForSim(idx){
+  const slot=state.cardSelectSlot;const iscar=slot==='car';
+  const cards=state.collection.filter(c=>iscar?(c.type==='car'):(c.type==='driver'));
+  const card=cards[idx];
+  if(slot===1)state.sim.driver1=card;
+  else if(slot===2)state.sim.driver2=card;
+  else state.sim.car=card;
+  closeModal('card-select-modal');renderSim();
+}
+
+const CIRCUITS=[
+  {name:"Bahrain",flag:"🇧🇭"},{name:"Saudi Arabia",flag:"🇸🇦"},{name:"Australia",flag:"🇦🇺"},{name:"Japan",flag:"🇯🇵"},
+  {name:"China",flag:"🇨🇳"},{name:"Miami",flag:"🇺🇸"},{name:"Monaco",flag:"🇲🇨"},{name:"Canada",flag:"🇨🇦"},
+  {name:"Spain",flag:"🇪🇸"},{name:"Austria",flag:"🇦🇹"},{name:"Britain",flag:"🇬🇧"},{name:"Hungary",flag:"🇭🇺"},
+  {name:"Belgium",flag:"🇧🇪"},{name:"Netherlands",flag:"🇳🇱"},{name:"Italy",flag:"🇮🇹"},{name:"Azerbaijan",flag:"🇦🇿"},
+  {name:"Singapore",flag:"🇸🇬"},{name:"USA",flag:"🇺🇸"},{name:"Mexico",flag:"🇲🇽"},{name:"Brazil",flag:"🇧🇷"},
+  {name:"Las Vegas",flag:"🇺🇸"},{name:"Abu Dhabi",flag:"🇦🇪"},
+];
+
+const AI_DRIVERS=[
+  {name:"Verstappen",rating:98,team:"Red Bull"},
+  {name:"Norris",rating:94,team:"McLaren"},
+  {name:"Leclerc",rating:92,team:"Ferrari"},
+  {name:"Alonso",rating:91,team:"Aston Martin"},
+  {name:"Hamilton",rating:95,team:"Ferrari"},
+  {name:"Russell",rating:90,team:"Mercedes"},
+  {name:"Piastri",rating:91,team:"McLaren"},
+  {name:"Sainz",rating:89,team:"Williams"},
+  {name:"Antonelli",rating:83,team:"Mercedes"},
+  {name:"Tsunoda",rating:85,team:"Red Bull"},
+  {name:"Stroll",rating:78,team:"Aston Martin"},
+  {name:"Hadjar",rating:80,team:"Racing Bulls"},
+  {name:"Gasly",rating:82,team:"Alpine"},
+  {name:"Ocon",rating:80,team:"Alpine"},
+  {name:"Magnussen",rating:76,team:"Haas"},
+  {name:"Hülkenberg",rating:82,team:"Kick Sauber"},
+  {name:"Albon",rating:81,team:"Williams"},
+  {name:"Zhou",rating:76,team:"Kick Sauber"},
+  {name:"Bearman",rating:78,team:"Haas"},
+  {name:"Lawson",rating:79,team:"Racing Bulls"},
+];
+
+function runSimulation(){
+  if(!state.sim.driver1||!state.sim.driver2){toast('❌ Select at least 2 drivers','red');return}
+  const d1=state.sim.driver1,d2=state.sim.driver2,car=state.sim.car;
+  const carBonus=car?Math.round((car.rating-85)*0.5):0;
+  const allDrivers=[...AI_DRIVERS];
+  // replace AI drivers with user's
+  const replace=(ai,user)=>{const i=allDrivers.findIndex(d=>d.name.includes(user.name.split(' ')[1]||user.name));if(i>=0)allDrivers.splice(i,1)};
+  replace(allDrivers,d1);replace(allDrivers,d2);
+  const myD1={name:d1.name,rating:d1.rating+carBonus,team:d1.team||'Your Team',isUser:true};
+  const myD2={name:d2.name,rating:d2.rating+carBonus,team:d2.team||'Your Team',isUser:true};
+  const field=[myD1,myD2,...allDrivers.slice(0,18)];
+  const standings={};field.forEach(d=>standings[d.name]={pts:0,wins:0,podiums:0,team:d.team});
+  const PTS=[25,18,15,12,10,8,6,4,2,1];
+  const raceResults=[];
+  CIRCUITS.forEach(circ=>{
+    // score each driver with noise
+    const scored=field.map(d=>({...d,score:d.rating+(Math.random()*30-15)}));
+    scored.sort((a,b)=>b.score-a.score);
+    scored.forEach((d,i)=>{
+      if(i<10)standings[d.name].pts+=PTS[i];
+      if(i===0)standings[d.name].wins++;
+      if(i<3)standings[d.name].podiums++;
+    });
+    raceResults.push({circ,top3:scored.slice(0,3)});
+  });
+  state.sim.results={raceResults,standings};
+  showSimResults(raceResults,standings,field);
+}
+
+function showSimResults(raceResults,standings,field){
+  document.getElementById('sim-results-view').style.display='';
+  const raceHtml=raceResults.map((r,i)=>{
+    const[p1,p2,p3]=r.top3;
+    return`<div class="sim-race-result">
+      <div class="sim-race-header">${r.circ.flag} ${r.circ.name} Grand Prix</div>
+      <div class="sim-podium-row"><span class="sim-pos p1">1st</span> <b>${p1.name}</b> <span style="font-size:.75rem;color:var(--text-dim)">${p1.team}</span></div>
+      <div class="sim-podium-row"><span class="sim-pos p2">2nd</span> ${p2.name} <span style="font-size:.75rem;color:var(--text-dim)">${p2.team}</span></div>
+      <div class="sim-podium-row"><span class="sim-pos p3">3rd</span> ${p3.name} <span style="font-size:.75rem;color:var(--text-dim)">${p3.team}</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('sim-race-results').innerHTML=raceHtml;
+  const sorted=Object.entries(standings).sort((a,b)=>b[1].pts-a[1].pts);
+  document.getElementById('sim-standings-body').innerHTML=sorted.map(([name,s],i)=>`
+    <tr>
+      <td style="font-family:'Share Tech Mono',monospace;color:${i<3?['var(--gold)','#c0c0c0','#cd7f32'][i]:'var(--text-dim)'}">${i+1}</td>
+      <td><b>${name}</b>${standings[name]?.isUser?` <span class="badge badge-red">YOU</span>`:''}</td>
+      <td style="color:var(--text-dim);font-size:.85rem">${s.team}</td>
+      <td><span class="pts-badge">${s.pts}</span></td>
+    </tr>`).join('');
+  const champ=sorted[0][0];
+  const isUserChamp=state.sim.driver1?.name===champ||state.sim.driver2?.name===champ;
+  if(isUserChamp){toast('🏆 YOUR DRIVER WON THE CHAMPIONSHIP! +500 coins!','gold');state.coins+=500;updateCoins();save();}
+  else toast(`🏁 Season complete! ${champ} wins the championship.`,'gold');
+}
+
+function switchSimTab(tab,el){
+  document.querySelectorAll('#page-sim .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sim-tab-races').style.display=tab==='races'?'':'none';
+  document.getElementById('sim-tab-standings').style.display=tab==='standings'?'':'none';
+}
+
+function resetSim(){
+  state.sim={driver1:null,driver2:null,car:null,results:null};
+  document.getElementById('sim-results-view').style.display='none';
+  renderSim();
+}
+
+// ===================== SEARCH =====================
+function renderSearch(){
+  doSearch();
+}
+
+function filterSearch(type,val,el){
+  state.searchFilter=val;
+  document.querySelectorAll('#search-filters .btn').forEach(b=>b.classList.remove('btn-red'));
+  el.classList.add('btn-red');el.classList.remove('btn-outline');
+  document.querySelectorAll('#search-filters .btn:not(.btn-red)').forEach(b=>b.classList.add('btn-outline'));
+  doSearch();
+}
+
+function doSearch(){
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  let pool=DRIVERS;
+  if(state.searchFilter==='modern')pool=DRIVERS.filter(d=>d.era==='modern');
+  else if(state.searchFilter==='classic')pool=DRIVERS.filter(d=>d.era==='classic');
+  else if(state.searchFilter==='2026')pool=DRIVERS.filter(d=>d.era==='2026');
+  if(q)pool=pool.filter(d=>d.name.toLowerCase().includes(q)||d.team?.toLowerCase().includes(q)||d.nat?.toLowerCase().includes(q));
+  const grid=document.getElementById('search-results');
+  if(!grid)return;
+  if(pool.length===0){grid.innerHTML=`<div style="color:var(--text-dim);grid-column:1/-1;text-align:center;padding:40px">No drivers found.</div>`;return}
+  grid.innerHTML=pool.map(d=>{
+    const tc=getTeamColor(d.team);
+    if(d.type==='car')return`<div class="driver-profile" onclick="showDriverModal(${JSON.stringify(d).replace(/"/g,'&quot;')})">
+      <div class="driver-profile-header" style="background:linear-gradient(135deg,${tc}22,${tc}44)">
+        <div>🏎 <span class="driver-profile-name">${d.name}</span></div>
+      </div>
+      <div class="driver-profile-body">
+        <div class="driver-profile-team">${d.team} · ${d.era} era</div>
+        <div class="driver-profile-stats">
+          <div class="dp-stat"><div class="dp-stat-v">${d.rating}</div><div class="dp-stat-l">Overall</div></div>
+          <div class="dp-stat"><div class="dp-stat-v">${d.speed}</div><div class="dp-stat-l">Speed</div></div>
+          <div class="dp-stat"><div class="dp-stat-v">${d.reliability}</div><div class="dp-stat-l">Reliability</div></div>
+        </div>
+      </div>
+    </div>`;
+    return`<div class="driver-profile" onclick="showDriverModal(${JSON.stringify(d).replace(/"/g,'&quot;')})">
+      <div class="driver-profile-header" style="background:linear-gradient(135deg,${tc}22,${tc}55)">
+        <div class="driver-profile-num" style="color:${tc}">${d.num||''}</div>
+        <div><div class="driver-profile-name">${d.name}</div></div>
+      </div>
+      <div class="driver-profile-body">
+        <div class="driver-profile-team">${d.team} · ${d.nat?.split(' ')[1]||''}</div>
+        <div class="driver-profile-stats">
+          <div class="dp-stat"><div class="dp-stat-v">${d.rating}</div><div class="dp-stat-l">OVR</div></div>
+          <div class="dp-stat"><div class="dp-stat-v">${d.wins}</div><div class="dp-stat-l">Wins</div></div>
+          <div class="dp-stat"><div class="dp-stat-v">${d.champs}</div><div class="dp-stat-l">WDC</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== BOOT =====================
+load();updateCoins();navigate('home');
+// Give starter coins toast
+setTimeout(()=>{if(state.collection.length===0&&state.coins<=600)toast('🎉 Welcome! You start with 🪙 500 coins — take a quiz or buy packs!','gold',5000)},1000);
+</script>
+</body>
+</html>
